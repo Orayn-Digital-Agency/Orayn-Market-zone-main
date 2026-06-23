@@ -97,11 +97,19 @@ export function AdminLeadsClient() {
   const releaseMutation = useMutation({
     mutationFn: async (lead: Lead) => {
       const supabase = createSupabaseBrowserClient();
-      const { error } = await supabase
-        .from("leads")
-        .update({ assigned_to: null, claimed_at: null, status: "uncontacted" })
-        .eq("id", lead.id);
+
+      const { data, error } = await supabase.rpc("release_lead_manually", {
+        p_lead_id: lead.id,
+      });
       if (error) throw error;
+      if (
+        data &&
+        typeof data === "object" &&
+        "success" in data &&
+        !data.success
+      ) {
+        throw new Error((data as { error?: string }).error ?? "Release failed");
+      }
 
       // Log the manual release
       if (lead.assigned_to) {

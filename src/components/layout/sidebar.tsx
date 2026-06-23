@@ -1,7 +1,7 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   TableProperties,
@@ -10,69 +10,75 @@ import {
   Users,
   List,
   DollarSign,
-} from 'lucide-react'
-import type { UserRole } from '@/lib/auth'
-import { useAgentSession } from '@/stores/agent-session'
+  CalendarClock,
+} from "lucide-react";
+import type { UserRole } from "@/lib/auth";
+import { useAgentSession } from "@/stores/agent-session";
 
 interface NavItem {
-  href: string
-  label: string
-  icon: React.ReactNode
-  adminOnly?: boolean
+  href: string;
+  label: string;
+  icon: React.ReactNode;
+  adminOnly?: boolean;
 }
 
 const NAV_ITEMS: NavItem[] = [
   {
-    href: '/dashboard',
-    label: 'Dashboard',
+    href: "/dashboard",
+    label: "Dashboard",
     icon: <LayoutDashboard size={18} />,
   },
   {
-    href: '/sales',
-    label: 'Sales',
+    href: "/sales",
+    label: "Sales",
     icon: <TableProperties size={18} />,
   },
   {
-    href: '/notifications',
-    label: 'Notifications',
+    href: "/follow-ups",
+    label: "Follow-ups Due",
+    icon: <CalendarClock size={18} />,
+  },
+  {
+    href: "/notifications",
+    label: "Notifications",
     icon: <Bell size={18} />,
   },
   {
-    href: '/settings',
-    label: 'Settings',
+    href: "/settings",
+    label: "Settings",
     icon: <Settings size={18} />,
   },
   {
-    href: '/admin/agents',
-    label: 'Agent Management',
+    href: "/admin/agents",
+    label: "Agent Management",
     icon: <Users size={18} />,
     adminOnly: true,
   },
   {
-    href: '/admin/leads',
-    label: 'All Leads',
+    href: "/admin/leads",
+    label: "All Leads",
     icon: <List size={18} />,
     adminOnly: true,
   },
   {
-    href: '/admin/payouts',
-    label: 'Payouts',
+    href: "/admin/payouts",
+    label: "Payouts",
     icon: <DollarSign size={18} />,
     adminOnly: true,
   },
-]
+];
 
 interface SidebarProps {
-  role: UserRole
+  role: UserRole;
 }
 
 export function Sidebar({ role }: SidebarProps) {
-  const pathname = usePathname()
-  const { unreadNotifications } = useAgentSession()
+  const pathname = usePathname();
+  const { unreadNotifications } = useAgentSession();
 
   const visibleItems = NAV_ITEMS.filter(
-    (item) => !item.adminOnly || role === 'admin'
-  )
+    (item) => !item.adminOnly || role === "admin",
+  );
 
   return (
     <aside className="w-60 flex flex-col bg-orayn-dark h-full border-r border-white/5">
@@ -88,7 +94,7 @@ export function Sidebar({ role }: SidebarProps) {
 
       {/* Navigation */}
       <nav className="flex-1 py-4 overflow-y-auto">
-        {role === 'admin' && (
+        {role === "admin" && (
           <>
             <p className="px-6 text-xs font-bold uppercase tracking-widest text-white/30 mb-2">
               Agent View
@@ -99,7 +105,7 @@ export function Sidebar({ role }: SidebarProps) {
                 item={item}
                 isActive={pathname === item.href}
                 unreadCount={
-                  item.href === '/notifications' ? unreadNotifications : 0
+                  item.href === "/notifications" ? unreadNotifications : 0
                 }
               />
             ))}
@@ -118,7 +124,7 @@ export function Sidebar({ role }: SidebarProps) {
           </>
         )}
 
-        {role === 'agent' && (
+        {role === "agent" && (
           <>
             {visibleItems.map((item) => (
               <SidebarItem
@@ -126,7 +132,7 @@ export function Sidebar({ role }: SidebarProps) {
                 item={item}
                 isActive={pathname === item.href}
                 unreadCount={
-                  item.href === '/notifications' ? unreadNotifications : 0
+                  item.href === "/notifications" ? unreadNotifications : 0
                 }
               />
             ))}
@@ -141,7 +147,7 @@ export function Sidebar({ role }: SidebarProps) {
         </p>
       </div>
     </aside>
-  )
+  );
 }
 
 function SidebarItem({
@@ -149,9 +155,9 @@ function SidebarItem({
   isActive,
   unreadCount,
 }: {
-  item: NavItem
-  isActive: boolean
-  unreadCount: number
+  item: NavItem;
+  isActive: boolean;
+  unreadCount: number;
 }) {
   return (
     <Link
@@ -161,20 +167,26 @@ function SidebarItem({
         transition-all duration-150 relative group
         ${
           isActive
-            ? 'bg-white/10 text-white border-l-2 border-orayn-gold -ml-px pl-[23px]'
-            : 'text-white/60 hover:text-white hover:bg-white/5'
+            ? "bg-white/10 text-white border-l-2 border-orayn-gold -ml-px pl-[23px]"
+            : "text-white/60 hover:text-white hover:bg-white/5"
         }
       `}
     >
-      <span className={isActive ? 'text-orayn-gold' : 'text-white/50 group-hover:text-white/80'}>
+      <span
+        className={
+          isActive
+            ? "text-orayn-gold"
+            : "text-white/50 group-hover:text-white/80"
+        }
+      >
         {item.icon}
       </span>
       <span>{item.label}</span>
       {unreadCount > 0 && (
         <span className="ml-auto bg-orayn-gold text-orayn-dark text-xs font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
-          {unreadCount > 99 ? '99+' : unreadCount}
+          {unreadCount > 99 ? "99+" : unreadCount}
         </span>
       )}
     </Link>
-  )
+  );
 }

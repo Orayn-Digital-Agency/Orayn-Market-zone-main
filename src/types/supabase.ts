@@ -52,6 +52,12 @@ export type Database = {
           last_verified: string | null;
           created_at: string;
           google_place_id: string | null;
+          follow_up_date: string | null;
+          follow_up_note: string | null;
+          follow_up_set_by: string | null;
+          follow_up_set_at: string | null;
+          loss_reason_detail: string | null;
+          loss_reason_price: number | null;
         };
         Insert: {
           id?: string;
@@ -95,6 +101,12 @@ export type Database = {
           last_verified?: string | null;
           created_at?: string;
           google_place_id?: string | null;
+          follow_up_date?: string | null;
+          follow_up_note?: string | null;
+          follow_up_set_by?: string | null;
+          follow_up_set_at?: string | null;
+          loss_reason_detail?: string | null;
+          loss_reason_price?: number | null;
         };
         Update: {
           id?: string;
@@ -138,6 +150,12 @@ export type Database = {
           last_verified?: string | null;
           created_at?: string;
           google_place_id?: string | null;
+          follow_up_date?: string | null;
+          follow_up_note?: string | null;
+          follow_up_set_by?: string | null;
+          follow_up_set_at?: string | null;
+          loss_reason_detail?: string | null;
+          loss_reason_price?: number | null;
         };
       };
       agents: {
@@ -184,6 +202,16 @@ export type Database = {
           payment_confirmed: boolean;
           payment_confirmed_at: string | null;
           paystack_link: string | null;
+          // ── Payment instalment tracking (added via migration) ──────────
+          service_tier: string | null;
+          payment_60_confirmed: boolean;
+          payment_60_confirmed_at: string | null;
+          payment_60_link: string | null;
+          payment_60_amount: number | null;
+          payment_40_confirmed: boolean;
+          payment_40_confirmed_at: string | null;
+          payment_40_link: string | null;
+          payment_40_amount: number | null;
         };
         Insert: {
           id?: string;
@@ -199,6 +227,15 @@ export type Database = {
           payment_confirmed?: boolean;
           payment_confirmed_at?: string | null;
           paystack_link?: string | null;
+          service_tier?: string | null;
+          payment_60_confirmed?: boolean;
+          payment_60_confirmed_at?: string | null;
+          payment_60_link?: string | null;
+          payment_60_amount?: number | null;
+          payment_40_confirmed?: boolean;
+          payment_40_confirmed_at?: string | null;
+          payment_40_link?: string | null;
+          payment_40_amount?: number | null;
         };
         Update: {
           id?: string;
@@ -214,6 +251,15 @@ export type Database = {
           payment_confirmed?: boolean;
           payment_confirmed_at?: string | null;
           paystack_link?: string | null;
+          service_tier?: string | null;
+          payment_60_confirmed?: boolean;
+          payment_60_confirmed_at?: string | null;
+          payment_60_link?: string | null;
+          payment_60_amount?: number | null;
+          payment_40_confirmed?: boolean;
+          payment_40_confirmed_at?: string | null;
+          payment_40_link?: string | null;
+          payment_40_amount?: number | null;
         };
       };
       payouts: {
@@ -438,7 +484,9 @@ export type Database = {
         | "auto_released"
         | "payout_processed"
         | "early_payout_approved"
-        | "early_payout_denied";
+        | "early_payout_denied"
+        | "payment_confirmed"
+        | "deal_closed_confirmation";
     };
   };
 };

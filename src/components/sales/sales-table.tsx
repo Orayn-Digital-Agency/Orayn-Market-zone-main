@@ -16,8 +16,10 @@ import {
   TierBadge,
   WebQualityBadge,
 } from "@/components/ui/badges";
+import { FollowUpBadge } from "@/components/sales/follow-up-badge";
 import { DealClosedModal } from "@/components/sales/deal-closed-modal";
 import { FailedModal } from "@/components/sales/failed-modal";
+import { FollowUpModal } from "@/components/sales/follow-up-modal";
 import { TableRowSkeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { formatNairaDirect, timeAgo } from "@/lib/format";
@@ -30,6 +32,7 @@ import {
   Search,
   Filter,
   TableProperties,
+  CalendarClock,
 } from "lucide-react";
 
 const STAGE_ORDER: LeadStatus[] = [
@@ -60,6 +63,7 @@ export function SalesTable({ _isAdmin = false }: SalesTableProps) {
 
   const [dealModalLead, setDealModalLead] = useState<Lead | null>(null);
   const [failModalLead, setFailModalLead] = useState<Lead | null>(null);
+  const [followUpModalLead, setFollowUpModalLead] = useState<Lead | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<LeadStatus | "all">("all");
   const [tierFilter, setTierFilter] = useState<ServiceTier | "all">("all");
@@ -369,7 +373,15 @@ export function SalesTable({ _isAdmin = false }: SalesTableProps) {
       {
         accessorKey: "status",
         header: "Status",
-        cell: ({ getValue }) => <StatusBadge status={getValue<LeadStatus>()} />,
+        cell: ({ row, getValue }) => (
+          <div className="flex flex-col gap-1">
+            <StatusBadge status={getValue<LeadStatus>()} />
+            <FollowUpBadge
+              followUpDate={row.original.follow_up_date}
+              followUpNote={row.original.follow_up_note}
+            />
+          </div>
+        ),
       },
       {
         id: "stage_selector",
@@ -454,6 +466,18 @@ export function SalesTable({ _isAdmin = false }: SalesTableProps) {
                   className="btn-success text-xs px-2.5 py-1.5"
                 >
                   Closed
+                </button>
+              )}
+              {["contacted", "demo_sent", "negotiating"].includes(
+                lead.status,
+              ) && (
+                <button
+                  onClick={() => setFollowUpModalLead(lead)}
+                  className="btn-secondary text-xs px-2.5 py-1.5 inline-flex items-center gap-1"
+                  title="Schedule a follow-up instead of marking Lost"
+                >
+                  <CalendarClock size={11} />
+                  Follow-up
                 </button>
               )}
               <button
@@ -673,6 +697,14 @@ export function SalesTable({ _isAdmin = false }: SalesTableProps) {
           onClose={() => setFailModalLead(null)}
           lead={failModalLead}
           agentId={agentId}
+        />
+      )}
+      {followUpModalLead && agentCode && (
+        <FollowUpModal
+          open={!!followUpModalLead}
+          onClose={() => setFollowUpModalLead(null)}
+          lead={followUpModalLead}
+          agentCode={agentCode}
         />
       )}
     </div>
