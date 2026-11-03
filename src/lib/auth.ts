@@ -19,7 +19,7 @@ export async function getAuthUser(): Promise<AuthUser | null> {
 
   if (error || !user) return null;
 
-  const role = (user.user_metadata?.role as UserRole) ?? "agent";
+  const role = (user.app_metadata?.role as UserRole) ?? "agent";
 
   const { data: agent } = await supabase
     .from("agents")

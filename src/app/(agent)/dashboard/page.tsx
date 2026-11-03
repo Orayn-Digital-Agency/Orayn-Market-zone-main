@@ -8,7 +8,7 @@ import { QuotaBar } from '@/components/dashboard/quota-bar'
 import { ActivityLog } from '@/components/dashboard/activity-log'
 import { Leaderboard } from '@/components/dashboard/leaderboard'
 import { ErrorBoundary } from '@/components/ui/error-boundary'
-import { formatNairaDirect, currentMonthWAT } from '@/lib/format'
+import { formatUSD, currentMonthWAT } from '@/lib/format'
 import { useAgentSession } from '@/stores/agent-session'
 import {
   DollarSign,
@@ -170,7 +170,7 @@ export default function DashboardPage() {
           <>
             <MetricCard
               title="Earnings This Month"
-              value={formatNairaDirect(metrics?.earningsThisMonth ?? 0)}
+              value={formatUSD(metrics?.earningsThisMonth ?? 0)}
               icon={DollarSign}
               iconBg="bg-orayn-green-bg"
               iconColor="text-orayn-green"
@@ -202,7 +202,7 @@ export default function DashboardPage() {
             />
             <MetricCard
               title="Pending Payout"
-              value={formatNairaDirect(metrics?.pending ?? 0)}
+              value={formatUSD(metrics?.pending ?? 0)}
               icon={Clock}
               iconBg="bg-orayn-light"
               iconColor="text-orayn-navy"

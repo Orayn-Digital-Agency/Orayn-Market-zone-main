@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { TableRowSkeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
-import { formatNairaDirect, formatDateWAT } from "@/lib/format";
+import { formatUSD, formatDateWAT } from "@/lib/format";
 import { toast } from "sonner";
 import { CheckCircle, Clock, DollarSign } from "lucide-react";
 
@@ -170,7 +170,7 @@ export function PayoutsDashboardClient() {
                 Total Commissions
               </p>
               <p className="font-sora text-xl font-bold text-orayn-navy">
-                {formatNairaDirect(totalAll)}
+                {formatUSD(totalAll)}
               </p>
             </div>
             <div className="card">
@@ -178,7 +178,7 @@ export function PayoutsDashboardClient() {
                 Pending Transfer
               </p>
               <p className="font-sora text-xl font-bold text-orayn-red">
-                {formatNairaDirect(totalPending)}
+                {formatUSD(totalPending)}
               </p>
             </div>
             <div className="card">
@@ -238,7 +238,7 @@ export function PayoutsDashboardClient() {
                           {row.total_deals}
                         </td>
                         <td className="table-cell font-semibold text-orayn-green">
-                          {formatNairaDirect(row.total_commission)}
+                          {formatUSD(row.total_commission)}
                         </td>
                         <td className="table-cell">
                           <StatusPill status={row.payout_status} />
@@ -318,7 +318,7 @@ export function PayoutsDashboardClient() {
                         Commission
                       </p>
                       <p className="text-sm font-semibold text-orayn-green">
-                        {formatNairaDirect(row.total_commission)}
+                        {formatUSD(row.total_commission)}
                       </p>
                     </div>
                   </div>
@@ -398,7 +398,7 @@ export function PayoutsDashboardClient() {
                           {row.full_name}
                         </td>
                         <td className="table-cell font-semibold text-orayn-green">
-                          {formatNairaDirect(row.total_commission)}
+                          {formatUSD(row.total_commission)}
                         </td>
                         <td className="table-cell">
                           <StatusPill status={row.status} />
@@ -465,7 +465,7 @@ export function PayoutsDashboardClient() {
                         Commission
                       </p>
                       <p className="text-sm font-semibold text-orayn-green">
-                        {formatNairaDirect(row.total_commission)}
+                        {formatUSD(row.total_commission)}
                       </p>
                     </div>
                   </div>
@@ -493,7 +493,7 @@ export function PayoutsDashboardClient() {
           markPaidTarget && markPaidMutation.mutate(markPaidTarget)
         }
         title="Mark Payout as Paid"
-        description={`Confirm that you have transferred ${markPaidTarget ? formatNairaDirect(markPaidTarget.total_commission) : ""} to ${markPaidTarget?.full_name} (${markPaidTarget?.agent_code}). This action cannot be undone.`}
+        description={`Confirm that you have transferred ${markPaidTarget ? formatUSD(markPaidTarget.total_commission) : ""} to ${markPaidTarget?.full_name} (${markPaidTarget?.agent_code}). This action cannot be undone.`}
         confirmLabel="Confirm Payment"
         loading={markPaidMutation.isPending}
         variant="warning"

@@ -1,20 +1,24 @@
 /**
- * Formats a kobo integer (NGN * 100) as NGN currency string.
- * All amounts are stored as kobo in the DB and divided by 100 for display.
+ * MONEY: every amount in the database is USD CENTS (an integer). 75000 = $750.00.
+ * Use these helpers at the edges only (display, and converting what a person types).
  */
-export function formatNGN(kobo: number): string {
-  const naira = kobo / 100
-  return naira.toLocaleString('en-NG', { style: 'currency', currency: 'NGN' })
+export function formatUSD(cents: number): string {
+  return (cents / 100).toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: cents % 100 === 0 ? 0 : 2,
+    maximumFractionDigits: 2,
+  })
 }
 
-/**
- * Converts a naira integer (as stored in the leads/deals tables directly in NGN,
- * NOT kobo — the business plan uses NGN integers directly) to a display string.
- * Note: deal_amount in Supabase is stored as NGN integers (not kobo).
- * Only Paystack API calls use kobo (NGN * 100).
- */
-export function formatNairaDirect(naira: number): string {
-  return naira.toLocaleString('en-NG', { style: 'currency', currency: 'NGN' })
+/** Converts dollars typed by a person (e.g. 1250.5) to integer cents. */
+export function dollarsToCents(dollars: number): number {
+  return Math.round(dollars * 100)
+}
+
+/** Converts integer cents to a plain dollar number (for input fields). */
+export function centsToDollars(cents: number): number {
+  return cents / 100
 }
 
 /**
@@ -72,23 +76,28 @@ export function currentMonthWAT(): string {
     .join('-')
 }
 
-/**
- * Calculates commission rate: 30% if deal exceeds price_range_max, else 25%.
- * price_range_max is parsed from the price_range string e.g. "₦200,000 – ₦300,000".
- */
-export function getCommissionRate(
-  dealAmount: number,
-  priceRangeMax: number
-): 0.25 | 0.3 {
-  return dealAmount > priceRangeMax ? 0.3 : 0.25
-}
+/** Agents earn 20% of a closed deal... */
+export const COMMISSION_BASE_RATE = 0.2
+/** ...or 25% when the deal closes ABOVE the set price. */
+export const COMMISSION_BONUS_RATE = 0.25
 
 /**
- * Parses the upper bound from a price_range string like "₦200,000 – ₦300,000".
+ * 25% if the deal is above the set price, otherwise 20%.
+ * (The database enforces this too; this is for the live preview in the UI.)
  */
-export function parsePriceRangeMax(priceRange: string): number {
-  const parts = priceRange.split('–')
-  if (parts.length < 2) return 0
-  const raw = parts[1].replace(/[₦,\s+]/g, '')
-  return parseInt(raw, 10) || 0
+export function getCommissionRate(
+  dealCents: number,
+  setPriceCents: number
+): typeof COMMISSION_BASE_RATE | typeof COMMISSION_BONUS_RATE {
+  return dealCents > setPriceCents ? COMMISSION_BONUS_RATE : COMMISSION_BASE_RATE
+}
+
+export function calcCommissionCents(dealCents: number, setPriceCents: number): number {
+  return Math.round(dealCents * getCommissionRate(dealCents, setPriceCents))
+}
+
+/** Payment is collected 60% upfront, 40% on delivery. */
+export function splitPayments(dealCents: number): { upfront: number; balance: number } {
+  const upfront = Math.round(dealCents * 0.6)
+  return { upfront, balance: dealCents - upfront }
 }

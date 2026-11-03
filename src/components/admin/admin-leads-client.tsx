@@ -7,7 +7,7 @@ import { StatusBadge, TierBadge } from "@/components/ui/badges";
 import { TableRowSkeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ConfirmModal } from "@/components/ui/confirm-modal";
-import { formatNairaDirect, timeAgo } from "@/lib/format";
+import { formatUSD, timeAgo } from "@/lib/format";
 import type { Lead, LeadStatus, ServiceTier } from "@/types/supabase";
 import { toast } from "sonner";
 import {
@@ -248,7 +248,7 @@ export function AdminLeadsClient() {
           const v = getValue<number | null>();
           return v ? (
             <span className="text-sm font-semibold text-orayn-green">
-              {formatNairaDirect(v)}
+              {formatUSD(v)}
             </span>
           ) : (
             <span className="text-xs text-orayn-gray">—</span>

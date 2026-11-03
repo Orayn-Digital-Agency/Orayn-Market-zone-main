@@ -22,7 +22,7 @@ import { FailedModal } from "@/components/sales/failed-modal";
 import { FollowUpModal } from "@/components/sales/follow-up-modal";
 import { TableRowSkeleton } from "@/components/ui/skeleton";
 import { EmptyState } from "@/components/ui/empty-state";
-import { formatNairaDirect, timeAgo } from "@/lib/format";
+import { formatUSD, timeAgo } from "@/lib/format";
 import type { Lead, LeadStatus, ServiceTier } from "@/types/supabase";
 import { toast } from "sonner";
 import {
@@ -345,13 +345,16 @@ export function SalesTable({ _isAdmin = false }: SalesTableProps) {
         },
       },
       {
-        accessorKey: "price_range",
-        header: "Price Range",
-        cell: ({ getValue }) => (
-          <span className="text-xs text-orayn-text">
-            {getValue<string>() ?? "—"}
-          </span>
-        ),
+        accessorKey: "set_price",
+        header: "Set Price",
+        cell: ({ getValue }) => {
+          const v = getValue<number | null>();
+          return (
+            <span className="text-xs font-semibold text-orayn-text">
+              {v ? formatUSD(v) : "—"}
+            </span>
+          );
+        },
       },
       {
         id: "demo_url",
@@ -428,7 +431,7 @@ export function SalesTable({ _isAdmin = false }: SalesTableProps) {
           const v = getValue<number | null>();
           return v ? (
             <span className="text-sm font-semibold text-orayn-green">
-              {formatNairaDirect(v)}
+              {formatUSD(v)}
             </span>
           ) : (
             <span className="text-xs text-orayn-gray">—</span>
@@ -442,7 +445,7 @@ export function SalesTable({ _isAdmin = false }: SalesTableProps) {
           const v = getValue<number | null>();
           return v ? (
             <span className="text-sm font-semibold text-orayn-gold">
-              {formatNairaDirect(v)}
+              {formatUSD(v)}
             </span>
           ) : (
             <span className="text-xs text-orayn-gray">—</span>

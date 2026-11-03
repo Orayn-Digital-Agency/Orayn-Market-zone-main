@@ -8,6 +8,7 @@ import { createSupabaseBrowserClient } from "@/lib/supabase-client";
 import { Modal } from "@/components/ui/modal";
 import type { Lead, LossReason } from "@/types/supabase";
 import { toast } from "sonner";
+import { dollarsToCents } from "@/lib/format";
 import { XCircle } from "lucide-react";
 
 interface FailedModalProps {
@@ -104,7 +105,7 @@ export function FailedModal({
       }
       if (values.lossReason === "price_too_high") {
         update.loss_reason_price = values.lossReasonPrice
-          ? Math.round(Number(values.lossReasonPrice))
+          ? dollarsToCents(Number(values.lossReasonPrice))
           : null;
       }
 
@@ -209,16 +210,16 @@ export function FailedModal({
               </label>
               <div className="relative">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-orayn-gray text-sm font-semibold">
-                  ₦
+                  $
                 </span>
                 <input
                   id="lossReasonPrice"
                   type="number"
                   min="0"
-                  step="1000"
+                  step="50"
                   {...register("lossReasonPrice")}
                   className={`input-field pl-7 ${errors.lossReasonPrice ? "input-error" : ""}`}
-                  placeholder="e.g. 150000"
+                  placeholder="e.g. 500"
                 />
               </div>
               {errors.lossReasonPrice && (

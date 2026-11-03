@@ -26,6 +26,18 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
+  // Payment-provider webhooks are server-to-server calls with no login cookie.
+  // They authenticate themselves with a signature (verified inside the route),
+  // so they must bypass the login redirect or they never arrive.
+  if (pathname.startsWith("/api/webhooks")) {
+    return response;
+  }
+
+  // Public page the client lands on after paying (they are not signed in).
+  if (pathname.startsWith("/payment-received")) {
+    return response;
+  }
+
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
@@ -76,7 +88,7 @@ export async function middleware(request: NextRequest) {
   }
 
   if (user && pathname.startsWith("/admin")) {
-    const role = user.user_metadata?.role as string | undefined;
+    const role = user.app_metadata?.role as string | undefined;
     if (role !== "admin") {
       const url = request.nextUrl.clone();
       url.pathname = "/dashboard";

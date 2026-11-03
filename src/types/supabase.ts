@@ -29,6 +29,10 @@ export type Database = {
           lead_score: number | null;
           service_tier: "Starter" | "Business" | "Premium" | "Platform" | null;
           price_range: string | null;
+          set_price: number | null;
+          country: string | null;
+          currency: string | null;
+          address: string | null;
           assigned_to: string | null;
           claimed_at: string | null;
           status:
@@ -78,6 +82,10 @@ export type Database = {
           lead_score?: number | null;
           service_tier?: "Starter" | "Business" | "Premium" | "Platform" | null;
           price_range?: string | null;
+          set_price?: number | null;
+          country?: string | null;
+          currency?: string | null;
+          address?: string | null;
           assigned_to?: string | null;
           claimed_at?: string | null;
           status?:
@@ -127,6 +135,10 @@ export type Database = {
           lead_score?: number | null;
           service_tier?: "Starter" | "Business" | "Premium" | "Platform" | null;
           price_range?: string | null;
+          set_price?: number | null;
+          country?: string | null;
+          currency?: string | null;
+          address?: string | null;
           assigned_to?: string | null;
           claimed_at?: string | null;
           status?:
@@ -198,10 +210,8 @@ export type Database = {
           closed_at: string;
           payout_month: string;
           payout_status: "pending" | "paid";
-          paystack_reference: string | null;
           payment_confirmed: boolean;
           payment_confirmed_at: string | null;
-          paystack_link: string | null;
           // ── Payment instalment tracking (added via migration) ──────────
           service_tier: string | null;
           payment_60_confirmed: boolean;
@@ -212,21 +222,26 @@ export type Database = {
           payment_40_confirmed_at: string | null;
           payment_40_link: string | null;
           payment_40_amount: number | null;
+          // ── Bachs checkout tracking ────────────────────────────────
+          set_price: number | null;
+          payment_60_checkout_id: string | null;
+          payment_60_link_created_at: string | null;
+          payment_40_checkout_id: string | null;
+          payment_40_link_created_at: string | null;
+          created_at: string;
         };
         Insert: {
           id?: string;
           lead_id: string;
           agent_id: string;
           deal_amount: number;
-          commission_rate: number;
-          commission_amount: number;
+          commission_rate?: number;
+          commission_amount?: number;
           closed_at?: string;
           payout_month?: string;
           payout_status?: "pending" | "paid";
-          paystack_reference?: string | null;
           payment_confirmed?: boolean;
           payment_confirmed_at?: string | null;
-          paystack_link?: string | null;
           service_tier?: string | null;
           payment_60_confirmed?: boolean;
           payment_60_confirmed_at?: string | null;
@@ -236,6 +251,12 @@ export type Database = {
           payment_40_confirmed_at?: string | null;
           payment_40_link?: string | null;
           payment_40_amount?: number | null;
+          set_price?: number | null;
+          payment_60_checkout_id?: string | null;
+          payment_60_link_created_at?: string | null;
+          payment_40_checkout_id?: string | null;
+          payment_40_link_created_at?: string | null;
+          created_at?: string;
         };
         Update: {
           id?: string;
@@ -247,10 +268,8 @@ export type Database = {
           closed_at?: string;
           payout_month?: string;
           payout_status?: "pending" | "paid";
-          paystack_reference?: string | null;
           payment_confirmed?: boolean;
           payment_confirmed_at?: string | null;
-          paystack_link?: string | null;
           service_tier?: string | null;
           payment_60_confirmed?: boolean;
           payment_60_confirmed_at?: string | null;
@@ -260,6 +279,12 @@ export type Database = {
           payment_40_confirmed_at?: string | null;
           payment_40_link?: string | null;
           payment_40_amount?: number | null;
+          set_price?: number | null;
+          payment_60_checkout_id?: string | null;
+          payment_60_link_created_at?: string | null;
+          payment_40_checkout_id?: string | null;
+          payment_40_link_created_at?: string | null;
+          created_at?: string;
         };
       };
       payouts: {
@@ -446,7 +471,7 @@ export type Database = {
         }>;
       };
       calculate_commission: {
-        Args: { p_deal_amount: number; p_price_range_max: number };
+        Args: { p_deal_amount: number; p_set_price: number };
         Returns: number;
       };
       auto_release_leads: {
